@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const PageConta = styled.section`
     padding: 50px 15px;
+        color: #fff;
 
     h2 {
         font-size: 16px;

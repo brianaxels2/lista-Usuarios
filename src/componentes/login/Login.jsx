@@ -5,14 +5,52 @@ import UserContext from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+
   const navigate = useNavigate();
-  const [email, setEmail] = useState();
-  const [senha, setSenha] = useState();
+
+  const [dadosLogin, setDadosLogin] = useState({
+    email: '',
+    senha: ''
+  });
+
   const { apiBaseUrl } = useContext(UserContext);
 
+  const [statusForm, setStatusForm] = useState({
+    type: "",
+    mensagem: "",
+  });
+
+  const valueInputs = (e) =>
+    setDadosLogin({ ...dadosLogin, [e.target.name]: e.target.value });
+
+  const validate = () => {
+
+    if (!dadosLogin.email) return setStatusForm({ type: "error", mensagem: "Email obrigatório!" });
+
+    if (!dadosLogin.senha) return setStatusForm({ type: "error", mensagem: "Senha obrigatória!" });
+
+    else return true;
+  };
+
   const login = () => {
-    axios.post(apiBaseUrl + "/login", { email, senha })
+
+    if (!validate()) return;
+
+    const payload = {
+      email: dadosLogin.email,
+      senha: dadosLogin.senha
+    }
+
+    axios.post(apiBaseUrl + "/login", payload, {
+      timeout: 10000
+    })
       .then((e) => {
+
+        setStatusForm({
+          type: "success",
+          mensagem: "Bem vindo!",
+        });
+
         localStorage.setItem("token", e.data.token);
         localStorage.setItem("email", e.data.usuario.email);
         localStorage.setItem("id", e.data.usuario.id);
@@ -22,10 +60,14 @@ export default function Login() {
 
         setTimeout(() => {
           return navigate("/home");
-        }, 500);
+        }, 600);
       })
       .catch((err) => {
-        alert(err);
+        //console.log(err);
+        setStatusForm({
+          type: "error",
+          mensagem: err.response.data.mensagem,
+        });
       });
   };
 
@@ -40,7 +82,8 @@ export default function Login() {
           name="email"
           id="email"
           placeholder="Digite seu email..."
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={valueInputs}
+          value={dadosLogin.email}
         />
 
         <label htmlFor="">Senha:</label>
@@ -49,8 +92,21 @@ export default function Login() {
           name="senha"
           id="senha"
           placeholder="Digite sua senha..."
-          onChange={(e) => setSenha(e.target.value)}
+          onChange={valueInputs}
+          value={dadosLogin.senha}
         />
+
+        {statusForm.type === "success" ? (
+          <p className="success">{statusForm.mensagem}</p>
+        ) : (
+          ""
+        )}
+
+        {statusForm.type === "error" ? (
+          <p className="error">{statusForm.mensagem}</p>
+        ) : (
+          ""
+        )}
 
         <input
           className="btn-entrar"

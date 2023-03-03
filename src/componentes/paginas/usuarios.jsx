@@ -22,17 +22,18 @@ export default function Usuarios() {
             axios.get(apiBaseUrl + '/usuarios', {
                 headers: {
                     'Authorization': `token ${localToken}`
-                }
+                },
+                timeout: 10000,
             })
             
             .then(function (response) {
                 setDados(response.data);
                 setRemoveLoad(true)
             })
-            .catch(function (error) {
-                console.log(error);
+            .catch(function () {
+                alert('Tempo excedido, recarregue a página!');
             })
-        }, 1000)
+        }, 100)
     }
 
     return (

@@ -29,6 +29,7 @@ export default function Conta() {
         headers: {
           Authorization: `token ${localToken}`,
         },
+        timeout: 10000,
       })
       .then((e) => {
         setMeusDados(e.data);
@@ -37,7 +38,7 @@ export default function Conta() {
       .catch((err) => {
         alert(err);
       });
-    }, 1000)
+    }, 100)
   };
 
   const AgendamentosUsuario = () => {
@@ -45,12 +46,13 @@ export default function Conta() {
         headers: {
           Authorization: `token ${localToken}`,
         },
+        timeout: 10000, 
       })
       .then((e) => {
         setMeusAgendamentos(e.data);
       })
       .catch((err) => {
-        console.log(err);
+        alert(err);
       });
   };
 
@@ -58,19 +60,18 @@ export default function Conta() {
     const dadosUserExit = {
       id: id,
     };
-    axios
-      .delete(apiBaseUrl + "/agendamentos/delete/", {
+    axios.delete(apiBaseUrl + "/agendamentos/delete", {
         data: dadosUserExit,
         headers: {
           Authorization: `token ${localToken}`,
         },
+        timeout: 1000, 
       })
       .then(() => {
-        alert("Agendamento deletado com sucesso!");
-        AgendamentosUsuario();
+        return AgendamentosUsuario()
       })
-      .catch((error) => {
-        alert(error);
+      .catch(() => {
+        return navigate('/home')
       });
   };
 
@@ -85,6 +86,7 @@ export default function Conta() {
     }
     axios.delete(apiBaseUrl + '/usuarios/delete/', {
         data: dadosUserExit,
+        timeout: 1000,  
         headers: {
             'Authorization': `token ${localToken}`
         }
@@ -130,6 +132,7 @@ export default function Conta() {
                   ))}
               </tbody>
             </Table>
+
             <div className="next">
               <Button variant="primary" onClick={logout}>
                 Sair da conta
@@ -143,34 +146,35 @@ export default function Conta() {
           <div>
             <h2>Meus horário agendados</h2>
 
-            <Table className="segundaTable" striped bordered hover variant="dark">
-              <thead>
-                <tr>
-                  <th>Profissional</th>
-                  <th>Data</th>
-                  <th>Horário</th>
-                  <th>Apagar</th>
-                </tr>
-              </thead>
+            {meusAgendamentos == '' ? 'Sem horários agendados...' :
+              <Table className="segundaTable" striped bordered hover variant="dark">
+                <thead>
+                  <tr>
+                    <th>Profissional</th>
+                    <th>Data</th>
+                    <th>Horário</th>
+                    <th>Apagar</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {meusAgendamentos &&
-                  meusAgendamentos.map((e, i) => (
-                    <tr key={i}>
-                      <td>{e.barbeiro}</td>
-                      <td>
-                        {new Date(e.data_agendamento).toLocaleDateString("pt-BR")}
-                      </td>
-                      <td>{e.horario}</td>
-                      <td>
-                        <Button variant="danger" onClick={() => exitAgenda(e.id)}>
-                          Apagar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </Table>
+                <tbody>
+                  {meusAgendamentos && meusAgendamentos.map((e, i) => (
+                      <tr key={i}>
+                        <td>{e.barbeiro}</td>
+                        <td>
+                          {new Date(e.data_agendamento).toLocaleDateString("pt-BR")}
+                        </td>
+                        <td>{e.horario.substring(0, 5)}</td>
+                        <td>
+                          <Button variant="danger" onClick={() => exitAgenda(e.id)}>
+                            Apagar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </Table>
+            }
           </div>
       </PageConta>
     }

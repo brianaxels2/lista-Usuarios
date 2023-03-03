@@ -31,13 +31,6 @@ export default function Agendamentos() {
     const valueInputs = e => setDadosAgendamento({...dadosAgendamento, [e.target.name]: e.target.value});
 
     const validate = () => {
-    //     let day = new Date()
-    //     let dia = day.getDate();
-    //     let mes = (day.getMonth() + 1).toString();
-    //     let mesf = mes.length === 1 ? '0'+mes : mes;
-    //     let ano = day.getFullYear()
-    //     //const dataFormatada = `${dia}/${mesf}/${ano}`
-    //     let dataNova = (new Intl.DateTimeFormat('pt-BR').format(day));
 
         if(!dadosAgendamento.horario) return setStatusForm({type:'error', mensagem:'Horário obrigatório!'})
 
@@ -64,15 +57,16 @@ export default function Agendamentos() {
         axios.post(apiBaseUrl + '/agendamentos/novo', data, {
             headers: {
                 'Authorization': `token ${localToken}`
-            }
+            },
+            timeout: 10000,
         })
         .then( () => {
             setTimeout(() => {
                 return navigate("/home")
-            }, 800)
+            }, 100)
         })
         .catch( (err) => {
-            if(err === 409){
+            if(err == 409){
                 alert('Email já cadastrado na base de dados')
             }
         })

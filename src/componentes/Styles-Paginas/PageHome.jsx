@@ -2,7 +2,8 @@ import styled from "styled-components";
 
 export const PageHome = styled.section`
     padding: 50px 15px;
-
+    color: #fff;
+    
     h2 {
         font-size: 16px;
         font-weight: 700;

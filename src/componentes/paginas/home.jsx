@@ -23,15 +23,17 @@ export default function Home() {
             headers: {
               Authorization: `token ${localToken}`,
             },
+            timeout: 10000, 
           })
+          
           .then((e) => {
             setAgendamentos(e.data);
             setRemoveLoad(true)
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
+            alert('Tempo excedido, recarregue a página!');
           });
-    }, 1000)
+    }, 100)
   };
 
   return (
@@ -43,28 +45,30 @@ export default function Home() {
           <div>
               <h2>Horários agendados</h2>
 
-              <Table striped bordered hover variant="dark">
-                <thead>
-                    <tr>
-                    <th>Nome</th>
-                    <th>Profissional</th>
-                    <th>Horário</th>
-                    <th>Data</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {agendamentos && agendamentos.map((e, i) => (
-                        <tr key={i}>
-                          <td>{e.usuario.nome}</td>
-                          <td>{e.barbeiro}</td>
-                          <td>{e.horario}</td>
-                          <td>
-                            {e.data_agendamento.split('-').reverse().join('/')}
-                          </td>
-                        </tr>
-                    ))}
-                </tbody>
-              </Table>
+              {agendamentos == '' ? 'Sem horários agendados...' :
+                <Table striped bordered hover variant="dark">
+                  <thead>
+                      <tr>
+                      <th>Nome</th>
+                      <th>Profissional</th>
+                      <th>Horário</th>
+                      <th>Data</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {agendamentos && agendamentos.map((e, i) => (
+                          <tr key={i}>
+                            <td>{e.usuario.nome}</td>
+                            <td>{e.barbeiro}</td>
+                            <td>{e.horario.substring(0, 5)}</td>
+                            <td>
+                              {e.data_agendamento.split('-').reverse().join('/')}
+                            </td>
+                          </tr>
+                      ))}
+                  </tbody>
+                </Table>
+              }
           </div>
       </PageHome>
     }

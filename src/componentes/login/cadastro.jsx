@@ -59,7 +59,6 @@ export default function Login() {
     };
 
     axios.post(apiBaseUrl + "/usuarios/novo", data)
-
       .then(() => {
         setStatusForm({
           type: "success",
@@ -68,11 +67,14 @@ export default function Login() {
 
         setTimeout(() => {
           return navigate("/");
-        }, 1000);
+        }, 100);
       })
       .catch((err) => {
         if (err.response.data.mensagem || err.response.statusText) {
-          alert(err.response.data.mensagem);
+          setStatusForm({
+            type: "error",
+            mensagem: err.response.data.mensagem,
+          });
         }
       });
   };
